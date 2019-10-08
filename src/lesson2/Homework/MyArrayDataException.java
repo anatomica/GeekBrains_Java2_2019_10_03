@@ -1,8 +1,8 @@
 package lesson2.Homework;
 
-public class MyArrayDataException extends ClassCastException {
+class MyArrayDataException extends NumberFormatException {
 
-    public MyArrayDataException (String message) {
+    MyArrayDataException(String message) {
         super (message);
     }
 }

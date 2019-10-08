@@ -1,8 +1,8 @@
 package lesson2.Homework;
 
-public class MyArraySizeException extends ArrayIndexOutOfBoundsException {
+class MyArraySizeException extends ArrayIndexOutOfBoundsException {
 
-    public MyArraySizeException (String message) {
+    MyArraySizeException(String message) {
         super (message);
     }
 }

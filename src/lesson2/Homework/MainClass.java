@@ -3,7 +3,7 @@ package lesson2.Homework;
 public class MainClass {
     private static int number;
     private static int result;
-    private static String[][] arrayStrings = new String[][] {{"1", "2", "3", "4", "5"},
+    private static String[][] arrayStrings = new String[][] {{"1", "2", "3", "4"},
             {"5", "6", "7", "8"}, {"9", "10", "11", "12"}, {"13", "14", "15", "16"}};
 
     public static void main(String[] args) {
@@ -22,6 +22,10 @@ public class MainClass {
     }
 
     private static void arrayMassive(String[][] args) throws MyArraySizeException, NumberFormatException {
+
+        // arrayStrings.length - строки
+        // arrayStrings[0].length - 1 колонка
+        // arrayStrings[1].length - 2 колонка и т.д.
         if (arrayStrings.length != 4 || arrayStrings[0].length != 4 || arrayStrings[1].length != 4 ||
                 arrayStrings[2].length != 4 || arrayStrings[3].length != 4) {
             for (String[] arg : arrayStrings) {

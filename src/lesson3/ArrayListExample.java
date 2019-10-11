@@ -28,7 +28,7 @@ public class ArrayListExample {
         list.add(1);
         list.add(2);
         list.add(3);
-        list.addAll(List.of(1, 2));
+        // list.addAll(List.of(1, 2));
         Integer[] arr = new Integer[list.size()];
         list.toArray(arr);
         List<Integer> arr2 = Arrays.asList(arr);

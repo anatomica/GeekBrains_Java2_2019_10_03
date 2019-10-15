@@ -1,4 +1,4 @@
-package lesson4.Homework;
+package lesson4.Homework.Swing;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

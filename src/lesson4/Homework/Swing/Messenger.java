@@ -11,32 +11,40 @@ class Messenger extends JFrame {
 
     Messenger() {
         setTitle("Messenger");
-        setBounds(1000, 500, 500, 300);
+        setBounds(1000, 450, 500, 350);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel centerPanel = new JPanel();
-        add(centerPanel, BorderLayout.CENTER);
-        centerPanel.setBackground(Color.gray);
-        centerPanel.setLayout(new BorderLayout());
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Файл");
+        JMenuItem exitMenuItem = new JMenuItem("Выход");
+        menuBar.setLayout(new BorderLayout());
+        add(menuBar, BorderLayout.NORTH);
+        menuBar.add(menu);
+        menu.add(exitMenuItem);
 
-        JPanel bottonPanel = new JPanel();
-        add(bottonPanel, BorderLayout.SOUTH);
-        bottonPanel.setBackground(Color.darkGray);
-        bottonPanel.setPreferredSize(new Dimension(1, 40));
-        bottonPanel.setLayout(new BorderLayout());
+        JPanel textAreaPanel = new JPanel();
+        textAreaPanel.setLayout(new BorderLayout());
+        textAreaPanel.setBackground(Color.gray);
+        add(textAreaPanel, BorderLayout.CENTER);
 
-        JButton startButton = new JButton("Отправить");
-        bottonPanel.add(startButton, BorderLayout.EAST);
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.setBackground(Color.darkGray);
+        buttonPanel.setPreferredSize(new Dimension(1, 40));
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        JButton sendButton = new JButton("Отправить");
+        buttonPanel.add(sendButton, BorderLayout.EAST);
 
         textArea = new JTextArea();
         JScrollPane textAreaScroll = new JScrollPane(textArea);
-        centerPanel.add(textAreaScroll, BorderLayout.CENTER);
+        textAreaPanel.add(textAreaScroll, BorderLayout.CENTER);
         textArea.setEditable(false);
 
         textMessage = new JTextField();
-        bottonPanel.add(textMessage, BorderLayout.CENTER);
+        buttonPanel.add(textMessage, BorderLayout.CENTER);
 
-        startButton.addActionListener(new ActionListener() {
+        sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addText();
@@ -50,10 +58,17 @@ class Messenger extends JFrame {
             }
         });
 
+        exitMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+
         setVisible(true);
     }
     private void addText() {
-        textArea.append(textMessage.getText()+"\n");
+        textArea.append(textMessage.getText() + "\n");
         textMessage.setText("");
     }
 }

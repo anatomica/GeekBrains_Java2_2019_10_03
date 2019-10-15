@@ -7,7 +7,7 @@ import java.awt.event.ActionListener;
 class Messenger extends JFrame {
 
     private JTextArea textArea;
-    private JTextField textMassage;
+    private JTextField textMessage;
 
     Messenger() {
         setTitle("Messenger");
@@ -19,7 +19,7 @@ class Messenger extends JFrame {
         centerPanel.setBackground(Color.gray);
         centerPanel.setLayout(new BorderLayout());
 
-        JPanel bottonPanel = new JPanel(); // разделила окно на две панели, эта часть нижняя
+        JPanel bottonPanel = new JPanel();
         add(bottonPanel, BorderLayout.SOUTH);
         bottonPanel.setBackground(Color.darkGray);
         bottonPanel.setPreferredSize(new Dimension(1, 40));
@@ -33,8 +33,8 @@ class Messenger extends JFrame {
         centerPanel.add(textAreaScroll, BorderLayout.CENTER);
         textArea.setEditable(false);
 
-        textMassage = new JTextField();
-        bottonPanel.add(textMassage, BorderLayout.CENTER);
+        textMessage = new JTextField();
+        bottonPanel.add(textMessage, BorderLayout.CENTER);
 
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -43,7 +43,7 @@ class Messenger extends JFrame {
             }
         });
 
-        textMassage.addActionListener(new ActionListener() {
+        textMessage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addText();
@@ -53,7 +53,7 @@ class Messenger extends JFrame {
         setVisible(true);
     }
     private void addText() {
-        textArea.append(textMassage.getText()+"\n");
-        textMassage.setText("");
+        textArea.append(textMessage.getText()+"\n");
+        textMessage.setText("");
     }
 }

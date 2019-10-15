@@ -1,10 +1,8 @@
 package lesson4.Homework.JavaFX;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 
 public class FXMLDocumentController {
 
@@ -14,9 +12,16 @@ public class FXMLDocumentController {
     public TextField textMessage;
     @FXML
     public TextArea textArea;
+    @FXML
+    public MenuItem closeButton;
 
     @FXML
-    private void buttonAction(ActionEvent event) {
+    private void closeButtonAction(){
+        System.exit(0);
+    }
+
+    @FXML
+    private void sendButtonAction(ActionEvent event) {
         addText();
     }
 

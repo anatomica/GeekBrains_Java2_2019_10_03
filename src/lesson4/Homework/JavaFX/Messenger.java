@@ -1,11 +1,9 @@
 package lesson4.Homework.JavaFX;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 public class Messenger extends Application {
 
@@ -22,12 +20,9 @@ public class Messenger extends Application {
         Scene scene = new Scene(root);
 
         stage.setScene(scene);
-        stage.setOnHidden(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                System.out.println("Bye!");
-            }
-        });
+        stage.setTitle("Messenger");
+        stage.setX(900);
+        stage.setY(400);
         stage.show();
     }
 }

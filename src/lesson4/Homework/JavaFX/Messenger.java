@@ -21,6 +21,7 @@ public class Messenger extends Application {
 
         stage.setScene(scene);
         stage.setTitle("Messenger");
+        stage.setResizable(false);
         stage.setX(900);
         stage.setY(400);
         stage.show();

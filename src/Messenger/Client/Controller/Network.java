@@ -10,7 +10,7 @@ class Network {
     private final DataInputStream inputStream;
     private final DataOutputStream outputStream;
 
-    Network (String serverAddress, int port, MessageService messageService) throws IOException {
+    Network (String serverAddress, int port) throws IOException {
         Socket socket = new Socket(serverAddress, port);
         this.inputStream  = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());

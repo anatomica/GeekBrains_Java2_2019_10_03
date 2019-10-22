@@ -14,11 +14,11 @@ class MessageService {
     }
 
     void sendMessage(String message) {
-        textArea.appendText(message + System.lineSeparator());
+        textArea.appendText("Я: " + message + System.lineSeparator());
         network.send(message);
     }
 
     static void receiveMessage(String message) {
-        textArea.appendText(message + System.lineSeparator());
+        textArea.appendText("Сервер: " + message + System.lineSeparator());
     }
 }

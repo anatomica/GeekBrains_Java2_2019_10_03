@@ -20,7 +20,7 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         messageService = new MessageService(textArea);
         try {
-            Network network = new Network("localhost", 8189, messageService);
+            Network network = new Network("localhost", 8189);
             messageService.setNetwork(network);
         } catch (IOException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -32,20 +32,20 @@ public class Controller implements Initializable {
 
     @FXML
     private void closeButtonAction(){
-        Platform.exit();
+        System.exit(0);
     }
 
     @FXML
     private void sendButtonAction(ActionEvent event) {
-        sendMessage();
+        sendMessageAction();
     }
 
     @FXML
     private void textAction (ActionEvent event) {
-        sendMessage();
+        sendMessageAction();
     }
 
-    private void sendMessage() {
+    private void sendMessageAction() {
         String message = textMessage.getText();
         messageService.sendMessage(message);
         textMessage.clear();

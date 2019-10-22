@@ -1,8 +1,6 @@
 package NetworkChatClient.controller;
-
 import javafx.application.Platform;
 import NetworkChatClient.controller.message.IMessageService;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,7 +12,7 @@ public class Network {
     private final DataInputStream inputStream;
     private final DataOutputStream outputStream;
 
-    public Network(String serverAddress, int port, IMessageService messageService) throws IOException {
+    Network (String serverAddress, int port, IMessageService messageService) throws IOException {
         this.socket = new Socket(serverAddress, port);
         this.inputStream  = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());

@@ -41,6 +41,7 @@ public class PrimaryController implements Initializable {
 
     @FXML
     public void sendText(ActionEvent actionEvent) {
+
         sendMessage();
     }
 

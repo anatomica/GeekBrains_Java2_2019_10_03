@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 public class Messenger extends Application {
 
+    private static Scene scene;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -17,11 +19,10 @@ public class Messenger extends Application {
         loader.setLocation(getClass().getResource("scene.fxml"));
         Parent root = loader.load();
 
-        Scene scene = new Scene(root);
+        scene = new Scene(root);
 
         stage.setScene(scene);
         stage.setTitle("Messenger");
-        stage.setResizable(false);
         stage.setX(900);
         stage.setY(400);
         stage.show();

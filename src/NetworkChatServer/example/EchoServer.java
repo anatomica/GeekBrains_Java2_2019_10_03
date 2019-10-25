@@ -1,5 +1,4 @@
-package NetworkChatServer;
-
+package NetworkChatServer.example;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,11 +7,8 @@ import java.net.Socket;
 
 public class EchoServer {
     public static void main(String[] args) {
-        ServerSocket serverSocket = null;
         Socket socket;
-        try /*(ServerSocket serverSocket = new ServerSocket(8189))*/ {
-            serverSocket = new ServerSocket(8189);
-            System.out.println("Сервер запущен, ожидаем подключения...");
+        try (ServerSocket serverSocket = new ServerSocket(8189)) {
             socket = serverSocket.accept();
             System.out.println("Клиент подключился");
             DataInputStream in = new DataInputStream(socket.getInputStream());

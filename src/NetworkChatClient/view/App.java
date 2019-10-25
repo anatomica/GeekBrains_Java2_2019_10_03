@@ -1,11 +1,11 @@
 package NetworkChatClient.view;
-
+import NetworkChatClient.controller.PrimaryController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 
 /**
@@ -13,19 +13,19 @@ import java.io.IOException;
  */
 public class App extends Application {
 
-    private static Scene scene;
-
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("primary.fxml"));
-        stage.setTitle("Homework 4");
-        stage.setScene(scene);
-        stage.show();
-    }
+        stage.setTitle("Сетевой чат");
+        // stage.getIcons().add(new Image("stage_icon.png"));
 
-    private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
-        return fxmlLoader.load();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("primary.fxml"));
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+
+        PrimaryController controller = loader.getController();
+        stage.setOnHidden(e -> controller.shutdown());
+        stage.show();
     }
 
     public static void main(String[] args) {

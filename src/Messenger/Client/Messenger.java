@@ -1,4 +1,5 @@
 package Messenger.Client;
+import Messenger.Client.Controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,12 +16,15 @@ public class Messenger extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        stage.setTitle("Сетевой чат");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("scene.fxml"));
         Parent root = loader.load();
 
         scene = new Scene(root);
 
+        Controller controller = loader.getController();
+        stage.setOnHidden(e -> controller.shutdown());
         stage.setScene(scene);
         stage.setTitle("Messenger");
         stage.setX(900);

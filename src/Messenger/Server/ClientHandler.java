@@ -21,7 +21,11 @@ public class ClientHandler {
 
             new Thread(() -> {
                 try {
-                    authentication();
+                    while (true) {
+                        if (authentication()) {
+                            break;
+                        }
+                    }
                     readMessages();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -41,13 +45,20 @@ public class ClientHandler {
             if (clientMessage.equals("/end")) {
                 return;
             }
-            myServer.broadcastMessage(clientName + ": " + clientMessage);
+            if (clientMessage.startsWith("/w")) {
+                String[] privateMessage = clientMessage.split("\\s+", 3);
+                String privateNick = privateMessage[1];
+                String lastMessage = privateMessage[2];
+                myServer.privateMessage(privateNick, clientName, clientName + " [private]: " + lastMessage);
+            }
+            else
+            myServer.broadcastMessage(clientName,clientName + ": " + clientMessage);
         }
     }
 
     private void closeConnection() {
         myServer.unsubscribe(this);
-        myServer.broadcastMessage(clientName + " is offline");
+        myServer.broadcastMessage(clientName,clientName + " is offline");
         try {
             socket.close();
         } catch (IOException e) {
@@ -57,36 +68,37 @@ public class ClientHandler {
     }
 
     // "/auth login password"
-    private void authentication() throws IOException {
+    private boolean authentication() throws IOException {
         String clientMessage = in.readUTF();
         if (clientMessage.startsWith("/auth")) {
             String[] loginAndPasswords = clientMessage.split("\\s+");
             String login    = loginAndPasswords[1];
             String password = loginAndPasswords[2];
-
             String nick = myServer.getAuthService().getNickByLoginPass(login, password);
+
             if (nick == null) {
-                sendMessage("Неверные логин/пароль");
-                return;
+                sendMessage("Неверные логин/пароль!");
+                return false;
             }
 
             if (myServer.isNickBusy(nick)) {
-                sendMessage("Учетная запись уже используется");
-                return;
+                sendMessage("Учетная запись уже используется!");
+                return false;
             }
 
             sendMessage("/authok " + nick);
             clientName = nick;
-            myServer.broadcastMessage(clientName + " is online");
+            myServer.broadcastMessage(clientName,clientName + " is online");
             myServer.subscribe(this);
         }
+        return true;
     }
 
     public void sendMessage(String message)  {
         try {
             out.writeUTF(message);
         } catch (IOException e) {
-            System.err.println("Failed to send message to user " + clientName + " : " + message);
+            System.err.println("Ошибка отправки сообщения пользователю: " + clientName + " : " + message);
             e.printStackTrace();
         }
     }
@@ -94,5 +106,4 @@ public class ClientHandler {
     String getClientName() {
         return clientName;
     }
-
 }

@@ -20,7 +20,7 @@ class MyServer {
             while (true) {
                 System.out.println("Ожидание подключения клиентов ...");
                 Socket socket = serverSocket.accept();
-                System.out.println("Клиент подключен");
+                System.out.println("Клиент подключен!");
                 new ClientHandler(socket, this);
             }
         } catch (IOException e) {
@@ -51,9 +51,24 @@ class MyServer {
         return false;
     }
 
-    synchronized void broadcastMessage(String message) {
+    synchronized void broadcastMessage(String nameSender, String message) {
         for (ClientHandler client : clients) {
-            client.sendMessage(message);
+            if (!client.getClientName().equals(nameSender)) {
+                client.sendMessage(message);
+            }
+        }
+    }
+
+    synchronized void privateMessage(String nick, String sender, String message) {
+        for (ClientHandler client : clients) {
+            if (client.getClientName().equals(nick)) {
+                client.sendMessage(message);
+                break;
+            }
+            if (!client.getClientName().equals(nick) && client.getClientName().equals(sender)) {
+                client.sendMessage("Сервер: Этот клиент не подключен!");
+                break;
+            }
         }
     }
 }

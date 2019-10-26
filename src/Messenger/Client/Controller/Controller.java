@@ -65,7 +65,14 @@ public class Controller implements Initializable {
 
     private void sendMessageAction() {
         String message = textMessage.getText();
-        textMessage.appendText("Я: " + message + System.lineSeparator());
+        if (message.startsWith("/w")) {
+            String[] privateMessage = message.split("\\s+", 3);
+            String name = privateMessage[1];
+            String lastMessage = privateMessage[2];
+            textArea.appendText("Я [private] " + name + ": " + lastMessage + System.lineSeparator());
+        } else {
+            textArea.appendText("Я: " + message + System.lineSeparator());
+        }
         messageService.sendMessage(message);
         textMessage.clear();
     }
@@ -84,5 +91,4 @@ public class Controller implements Initializable {
         String password = passField.getText();
         messageService.sendMessage(String.format("/auth %s %s", login, password));
     }
-
 }

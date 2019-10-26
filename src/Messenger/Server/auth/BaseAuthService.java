@@ -17,9 +17,9 @@ public class BaseAuthService implements AuthService {
     }
 
     private final List<Entry> entries = Arrays.asList (
-            new Entry("anatomica", "1234", "Макс"),
-            new Entry("login2", "1234", "Олег"),
-            new Entry("login3", "1234", "Влад")
+            new Entry("1", "1", "Макс"),
+            new Entry("2", "2", "Олег"),
+            new Entry("3", "3", "Влад")
     );
 
     @Override

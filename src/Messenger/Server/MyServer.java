@@ -34,6 +34,7 @@ class MyServer {
     synchronized void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
     }
+
     synchronized void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
     }
@@ -59,16 +60,26 @@ class MyServer {
         }
     }
 
-    synchronized void privateMessage(String nick, String sender, String message) {
-        for (ClientHandler client : clients) {
-            if (client.getClientName().equals(nick)) {
-                client.sendMessage(message);
+    synchronized void privateMessage(String nick, ClientHandler sender, String message) {
+        for (int i = 0; i < clients.size(); i++) {
+            if (clients.get(i).getClientName().equals(nick)) {
+                clients.get(i).sendMessage(message);
                 break;
             }
-            if (!client.getClientName().equals(nick) && client.getClientName().equals(sender)) {
-                client.sendMessage("Сервер: Этот клиент не подключен!");
-                break;
+            if (i > 0 && i <= clients.size() && !clients.get(i).getClientName().equals(nick)) {
+                sender.sendMessage("Сервер: Этот клиент не подключен!");
             }
         }
+
+//        for (ClientHandler client : clients) {
+//            if (client.getClientName().equals(nick)) {
+//                client.sendMessage(message);
+//                break;
+//            }
+//            if (!client.getClientName().equals(nick)) {
+//                sender.sendMessage("Сервер: Этот клиент не подключен!");
+//            }
+//        }
+
     }
 }

@@ -49,7 +49,7 @@ public class ClientHandler {
                 String[] privateMessage = clientMessage.split("\\s+", 3);
                 String privateNick = privateMessage[1];
                 String lastMessage = privateMessage[2];
-                myServer.privateMessage(privateNick, clientName, clientName + " [private]: " + lastMessage);
+                myServer.privateMessage(privateNick, ClientHandler.this, clientName + " [private]: " + lastMessage);
             }
             else
             myServer.broadcastMessage(clientName,clientName + ": " + clientMessage);

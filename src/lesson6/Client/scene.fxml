@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <VBox prefHeight="400.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml/1"
-      xmlns="http://javafx.com/javafx/8.0.221" fx:controller="Messenger.Client.Controller.Controller">
+      xmlns="http://javafx.com/javafx/8.0.221" fx:controller="lesson6.Client.Controller.Controller">
   <children>
     <MenuBar>
       <menus>

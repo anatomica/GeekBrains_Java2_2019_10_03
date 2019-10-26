@@ -1,4 +1,4 @@
-package Messenger.Server;
+package lesson6.Server;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

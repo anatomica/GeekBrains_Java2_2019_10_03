@@ -1,5 +1,4 @@
-package Messenger.Client.Controller;
-import javafx.application.Platform;
+package lesson6.Client.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

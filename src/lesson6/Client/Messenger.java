@@ -1,4 +1,4 @@
-package Messenger.Client;
+package lesson6.Client;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,7 +22,7 @@ public class Messenger extends Application {
         scene = new Scene(root);
 
         stage.setScene(scene);
-        stage.setTitle("Messenger");
+        stage.setTitle("lesson6");
         stage.setX(900);
         stage.setY(400);
         stage.show();

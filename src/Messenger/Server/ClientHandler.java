@@ -11,6 +11,7 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
+    public static String[] privateMessage;
 
     ClientHandler(Socket socket, MyServer myServer) {
         try {
@@ -45,8 +46,12 @@ public class ClientHandler {
             if (clientMessage.equals("/end")) {
                 return;
             }
+            if (clientMessage.startsWith("/w") && clientMessage.endsWith(clientName)) {
+                ClientHandler.this.sendMessage("Сервер: Не указано само сообщение!");
+                continue;
+            }
             if (clientMessage.startsWith("/w")) {
-                String[] privateMessage = clientMessage.split("\\s+", 3);
+                privateMessage = clientMessage.split("\\s+", 3);
                 String privateNick = privateMessage[1];
                 String lastMessage = privateMessage[2];
                 myServer.privateMessage(privateNick, ClientHandler.this, clientName + " [private]: " + lastMessage);

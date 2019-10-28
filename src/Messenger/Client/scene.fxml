@@ -37,7 +37,7 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Файл">
                   <items>
-                    <MenuItem fx:id="closeButton" onAction="#closeButtonAction" mnemonicParsing="false" text="Выход" />
+                    <MenuItem fx:id="closeButton" mnemonicParsing="false" onAction="#closeButtonAction" text="Выход" />
                   </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Правка">
@@ -52,11 +52,16 @@
                 </Menu>
               </menus>
             </MenuBar>
-                <TextArea fx:id="textArea" editable="false" prefHeight="354.0" prefWidth="620.0" wrapText="true">
-                    <padding>
-                        <Insets bottom="5.0" right="5.0" />
-                    </padding>
-                </TextArea>
+            <HBox prefHeight="377.0" prefWidth="665.0">
+               <children>
+                      <TextArea fx:id="textArea" editable="false" prefHeight="354.0" prefWidth="620.0" wrapText="true">
+                          <padding>
+                              <Insets bottom="5.0" right="5.0" />
+                          </padding>
+                      </TextArea>
+                  <TextField editable="false" prefHeight="346.0" prefWidth="97.0" />
+               </children>
+            </HBox>
                 <HBox spacing="10.0">
                     <children>
                         <TextField fx:id="textMessage" onAction="#sendText" prefHeight="35.0" prefWidth="533.0" HBox.hgrow="ALWAYS" />

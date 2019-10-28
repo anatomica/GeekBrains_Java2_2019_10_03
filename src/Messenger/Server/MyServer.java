@@ -64,12 +64,10 @@ class MyServer {
         for (int i = 0; i < clients.size(); i++) {
             if (clients.get(i).getClientName().equals(nick)) {
                 clients.get(i).sendMessage(message);
-                break;
-            }
-            if (i > 0 && i <= clients.size() && !clients.get(i).getClientName().equals(nick)) {
-                sender.sendMessage("Сервер: Этот клиент не подключен!");
+                return;
             }
         }
+        sender.sendMessage("Сервер: Этот клиент не подключен!");
 
 //        for (ClientHandler client : clients) {
 //            if (client.getClientName().equals(nick)) {

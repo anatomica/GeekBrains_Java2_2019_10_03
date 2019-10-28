@@ -65,16 +65,31 @@ public class Controller implements Initializable {
 
     private void sendMessageAction() {
         String message = textMessage.getText();
-        if (message.startsWith("/w")) {
+        int count = 0;
+        for (int i = 0; i < message.length(); i++) {
+            if (message.charAt(i) == ' ')
+                count++;
+        }
+        if (message.startsWith("/w") && count < 1) {
+            textArea.appendText("Клиент: Не введен приватный ник!" + System.lineSeparator());
+            return;
+        }
+        if (message.startsWith("/w") && count < 2) {
+            textArea.appendText("Клиент: Не введено само приватное сообщение!" + System.lineSeparator());
+            return;
+        }
+        if (message.startsWith("/w") && count >= 2) {
             String[] privateMessage = message.split("\\s+", 3);
             String name = privateMessage[1];
             String lastMessage = privateMessage[2];
             textArea.appendText("Я [private] " + name + ": " + lastMessage + System.lineSeparator());
-        } else {
+        } else if (!message.isEmpty()) {
             textArea.appendText("Я: " + message + System.lineSeparator());
         }
-        messageService.sendMessage(message);
-        textMessage.clear();
+        if (!message.isEmpty()) {
+            messageService.sendMessage(message);
+            textMessage.clear();
+        }
     }
 
     public void shutdown() {

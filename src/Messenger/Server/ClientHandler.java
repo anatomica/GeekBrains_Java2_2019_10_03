@@ -46,14 +46,14 @@ public class ClientHandler {
             if (clientMessage.equals("/end")) {
                 return;
             }
-            if (clientMessage.startsWith("/w") && clientMessage.endsWith(clientName)) {
-                ClientHandler.this.sendMessage("Сервер: Не указано само сообщение!");
-                continue;
-            }
             if (clientMessage.startsWith("/w")) {
                 privateMessage = clientMessage.split("\\s+", 3);
                 String privateNick = privateMessage[1];
                 String lastMessage = privateMessage[2];
+                if (privateNick.equals(clientName)) {
+                    ClientHandler.this.sendMessage("Сервер: А смысл писать себе самому?)");
+                    continue;
+                }
                 myServer.privateMessage(privateNick, ClientHandler.this, clientName + " [private]: " + lastMessage);
             }
             else

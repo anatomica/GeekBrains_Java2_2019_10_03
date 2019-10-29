@@ -1,5 +1,6 @@
 package NetworkChatServer.main.client;
 import NetworkChatServer.main.MyServer;
+import NetworkChatServer.gson.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -8,9 +9,7 @@ import java.net.Socket;
 public class ClientHandler {
 
     private MyServer myServer;
-
     private String clientName;
-
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
@@ -22,7 +21,7 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
 
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 try {
                     authentication();
                     readMessages();
@@ -31,7 +30,9 @@ public class ClientHandler {
                 } finally {
                     closeConnection();
                 }
-            }).start();
+            });
+            thread.setDaemon(true);
+            thread.start();
         } catch (IOException e) {
             throw new RuntimeException("Failed to create client handler", e);
         }
@@ -42,10 +43,19 @@ public class ClientHandler {
         while (true) {
             String clientMessage = in.readUTF();
             System.out.printf("Message '%s' from client %s%n", clientMessage, clientName);
-            if (clientMessage.equals("/end")) {
-                return;
+            Message m = Message.fromJson(clientMessage);
+            switch (m.command) {
+                case PUBLIC_MESSAGE:
+                    PublicMessage publicMessage = m.publicMessage;
+                    myServer.broadcastMessage(publicMessage.from + ": " + publicMessage.message, this);
+                    break;
+                case PRIVATE_MESSAGE:
+                    PrivateMessage privateMessage = m.privateMessage;
+                    myServer.sendPrivateMessage(privateMessage.to, privateMessage.message);
+                    break;
+                case END:
+                    return;
             }
-            myServer.broadcastMessage(clientName + ": " + clientMessage);
         }
     }
 
@@ -62,27 +72,30 @@ public class ClientHandler {
 
     // "/auth login password"
     private void authentication() throws IOException {
-        String clientMessage = in.readUTF();
-        if (clientMessage.startsWith("/auth")) {
-            String[] loginAndPasswords = clientMessage.split("\\s+");
-            String login    = loginAndPasswords[1];
-            String password = loginAndPasswords[2];
+        while (true) {
+            String clientMessage = in.readUTF();
+            Message message = Message.fromJson(clientMessage);
+            if (message.command == Command.AUTH_MESSAGE) {
+                AuthMessage authMessage = message.authMessage;
+                String login = authMessage.login;
+                String password = authMessage.password;
+                String nick = myServer.getAuthService().getNickByLoginPass(login, password);
+                if (nick == null) {
+                    sendMessage("Неверные логин/пароль");
+                    continue;
+                }
 
-            String nick = myServer.getAuthService().getNickByLoginPass(login, password);
-            if (nick == null) {
-                sendMessage("Неверные логин/пароль");
-                return;
+                if (myServer.isNickBusy(nick)) {
+                    sendMessage("Учетная запись уже используется");
+                    continue;
+                }
+
+                sendMessage("/authok " + nick);
+                clientName = nick;
+                myServer.broadcastMessage(clientName + " is online");
+                myServer.subscribe(this);
+                break;
             }
-
-            if (myServer.isNickBusy(nick)) {
-                sendMessage("Учетная запись уже используется");
-                return;
-            }
-
-            sendMessage("/authok " + nick);
-            clientName = nick;
-            myServer.broadcastMessage(clientName + " is online");
-            myServer.subscribe(this);
         }
     }
 

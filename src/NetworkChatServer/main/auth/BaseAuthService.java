@@ -1,5 +1,4 @@
 package NetworkChatServer.main.auth;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,17 +9,17 @@ public class BaseAuthService implements AuthService {
         private String password;
         private String nick;
 
-        Entry(String login, String password, String nick) {
+        public Entry(String login, String password, String nick) {
             this.login = login;
             this.password = password;
             this.nick = nick;
         }
     }
 
-    private final List<Entry> entries = Arrays.asList (
-            new Entry("login1", "pass1", "nick1"),
-            new Entry("login2", "pass2", "nick2"),
-            new Entry("login3", "pass3", "nick3")
+    private final List<Entry> entries = Arrays.asList(
+            new Entry("1", "1", "nick1"),
+            new Entry("2", "2", "nick2"),
+            new Entry("3", "3", "nick3")
     );
 
 

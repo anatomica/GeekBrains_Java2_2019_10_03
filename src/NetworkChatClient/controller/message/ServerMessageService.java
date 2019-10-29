@@ -1,8 +1,11 @@
 package NetworkChatClient.controller.message;
-import NetworkChatClient.controller.Network;
 import NetworkChatClient.controller.PrimaryController;
+import NetworkChatClient.gson.ClientListMessage;
+import NetworkChatClient.gson.Message;
+import javafx.collections.FXCollections;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
+import NetworkChatClient.controller.Network;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -20,6 +23,7 @@ public class ServerMessageService implements IMessageService {
     private PrimaryController primaryController;
     private boolean needStopServerOnClosed;
     private Network network;
+    private String nickname;
 
     public ServerMessageService(PrimaryController primaryController, boolean needStopServerOnClosed) {
         this.chatTextArea = primaryController.chatTextArea;
@@ -59,9 +63,13 @@ public class ServerMessageService implements IMessageService {
         network.send(message);
     }
 
+
+
     @Override
     public void processRetrievedMessage(String message) {
         if (message.startsWith("/authok")) {
+            nickname = message.split("\\s+")[1];
+            primaryController.nickName = nickname;
             primaryController.authPanel.setVisible(false);
             primaryController.chatPanel.setVisible(true);
         }
@@ -72,7 +80,14 @@ public class ServerMessageService implements IMessageService {
             alert.showAndWait();
         }
         else {
-            chatTextArea.appendText("Сервер: " + message + System.lineSeparator());
+            if (message.startsWith("{") && message.endsWith("}")) {
+                Message msg = Message.fromJson(message);
+                ClientListMessage clientListMessage = msg.clientListMessage;
+                primaryController.clientList.setItems(FXCollections.observableArrayList(clientListMessage.online));
+            }
+            else {
+                chatTextArea.appendText(message + System.lineSeparator());
+            }
         }
     }
 

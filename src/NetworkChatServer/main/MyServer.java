@@ -1,4 +1,5 @@
 package NetworkChatServer.main;
+import NetworkChatServer.gson.Message;
 import NetworkChatServer.main.auth.AuthService;
 import NetworkChatServer.main.auth.BaseAuthService;
 import NetworkChatServer.main.client.ClientHandler;
@@ -6,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MyServer {
@@ -16,9 +18,13 @@ public class MyServer {
 
     private List<ClientHandler> clients = new ArrayList<>();
 
+    private ServerSocket serverSocket = null;
+
     public MyServer() {
         System.out.println("Server is running");
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+
+        try {
+            serverSocket = new ServerSocket(PORT);
             authService.start();
             while (true) {
                 System.out.println("Awaiting client connection...");
@@ -31,16 +37,37 @@ public class MyServer {
             System.err.println("Ошибка в работе сервера. Причина: " + e.getMessage());
             e.printStackTrace();
         } finally {
+            shutdownServer();
+        }
+    }
+
+    private void shutdownServer() {
+        try {
             authService.stop();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public synchronized void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
+        broadcastClientsList();
+    }
+
+    private void broadcastClientsList() {
+        List<String> nicknames = new ArrayList<>();
+        for (ClientHandler client : clients) {
+            nicknames.add(client.getClientName());
+        }
+
+        Message message = Message.createClientList(nicknames);
+        broadcastMessage(message.toJson());
     }
 
     public synchronized void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
+        broadcastClientsList();
     }
 
     public AuthService getAuthService() {
@@ -57,9 +84,21 @@ public class MyServer {
         return false;
     }
 
-    public synchronized void broadcastMessage(String message) {
+    public synchronized void broadcastMessage(String message, ClientHandler... unfilteredClients) {
+        List<ClientHandler> unfiltered = Arrays.asList(unfilteredClients);
         for (ClientHandler client : clients) {
-            client.sendMessage(message);
+            if (!unfiltered.contains(client)) {
+                client.sendMessage(message);
+            }
+        }
+    }
+
+    public synchronized void sendPrivateMessage(String receivedLogin, String message) {
+        for (ClientHandler client : clients) {
+            if (client.getClientName().equals(receivedLogin)) {
+                client.sendMessage(message);
+                break;
+            }
         }
     }
 }

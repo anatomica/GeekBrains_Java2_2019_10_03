@@ -1,4 +1,5 @@
 package NetworkChatClient.controller.message;
+
 import java.io.Closeable;
 import java.io.IOException;
 

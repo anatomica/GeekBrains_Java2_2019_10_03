@@ -1,4 +1,4 @@
-package Messenger.Server.auth;
+package lesson7.Server.auth;
 import java.util.Arrays;
 import java.util.List;
 

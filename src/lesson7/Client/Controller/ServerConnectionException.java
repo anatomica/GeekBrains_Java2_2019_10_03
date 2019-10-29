@@ -1,4 +1,4 @@
-package Messenger.Client.Controller;
+package lesson7.Client.Controller;
 
 class ServerConnectionException extends RuntimeException {
 

@@ -1,5 +1,5 @@
-package Messenger.Client;
-import Messenger.Client.Controller.Controller;
+package lesson7.Client;
+import lesson7.Client.Controller.Controller;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -26,7 +26,7 @@ public class Messenger extends Application {
         Controller controller = loader.getController();
         stage.setOnHidden(e -> controller.shutdown());
         stage.setScene(scene);
-        stage.setTitle("Messenger");
+        stage.setTitle("lesson7");
         stage.setX(900);
         stage.setY(400);
         stage.show();

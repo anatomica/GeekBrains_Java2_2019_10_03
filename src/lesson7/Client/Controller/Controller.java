@@ -1,4 +1,4 @@
-package Messenger.Client.Controller;
+package lesson7.Client.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

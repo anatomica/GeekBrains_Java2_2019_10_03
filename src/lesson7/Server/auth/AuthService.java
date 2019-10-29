@@ -1,4 +1,4 @@
-package Messenger.Server.auth;
+package lesson7.Server.auth;
 import com.sun.istack.internal.Nullable;
 
 public interface AuthService {

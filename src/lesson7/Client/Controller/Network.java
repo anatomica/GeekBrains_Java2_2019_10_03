@@ -1,4 +1,4 @@
-package Messenger.Client.Controller;
+package lesson7.Client.Controller;
 import javafx.application.Platform;
 import java.io.Closeable;
 import java.io.DataInputStream;

@@ -1,6 +1,6 @@
-package Messenger.Server;
-import Messenger.Server.auth.AuthService;
-import Messenger.Server.auth.BaseAuthService;
+package lesson7.Server;
+import lesson7.Server.auth.AuthService;
+import lesson7.Server.auth.BaseAuthService;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;

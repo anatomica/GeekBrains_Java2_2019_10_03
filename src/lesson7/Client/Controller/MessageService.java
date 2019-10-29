@@ -1,4 +1,4 @@
-package Messenger.Client.Controller;
+package lesson7.Client.Controller;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package Messenger.Server;
+package lesson7.Server;
 
 public class ServerApp {
 

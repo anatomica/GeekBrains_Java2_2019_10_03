@@ -1,10 +1,12 @@
 package Messenger.Client.Controller;
+import Messenger.Client.gson.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,8 +21,10 @@ public class Controller implements Initializable {
     @FXML public PasswordField passField;
     @FXML public HBox authPanel;
     @FXML public VBox chatPanel;
-
+    @FXML public ListView<String> clientList;
+    public String nickName;
     private MessageService messageService;
+    // private String selectedNickname;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -37,9 +41,9 @@ public class Controller implements Initializable {
         alert.setHeaderText(e.getMessage());
         VBox dialogPaneContent = new VBox();
         Label label = new Label("Stack Trace:");
-//        String stackTrace = ExceptionUtils.getStackTrace(e);
+        String stackTrace = ExceptionUtils.getStackTrace(e);
         TextArea textArea = new TextArea();
-//        textArea.setText(stackTrace);
+        textArea.setText(stackTrace);
         dialogPaneContent.getChildren().addAll(label, textArea);
         // Set content for Dialog Pane
         alert.getDialogPane().setContent(dialogPaneContent);
@@ -65,31 +69,42 @@ public class Controller implements Initializable {
 
     private void sendMessageAction() {
         String message = textMessage.getText();
-        int count = 0;
-        for (int i = 0; i < message.length(); i++) {
-            if (message.charAt(i) == ' ')
-                count++;
+        textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
+        Message msg = buildMessage(message);
+        messageService.sendMessage(msg.toJson());
+        textMessage.clear();
+    }
+
+    private Message buildMessage(String message) {
+        String selectedNickname = clientList.getSelectionModel().getSelectedItem();
+        if (selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
+            return buildPublicMessage(message);
         }
-        if (message.startsWith("/w") && count < 1) {
-            textArea.appendText("Клиент: Не введен приватный ник!" + System.lineSeparator());
-            return;
+        if (selectedNickname != null) {
+            PrivateMessage msg = new PrivateMessage();
+            msg.from = nickName;
+            msg.to = selectedNickname;
+            msg.message = message;
+            return Message.createPrivate(msg);
         }
-        if (message.startsWith("/w") && count < 2) {
-            textArea.appendText("Клиент: Не введено само приватное сообщение!" + System.lineSeparator());
-            return;
+        if (selectedNickname == null) {
+            return buildPublicMessage(message);
         }
-        if (message.startsWith("/w") && count >= 2) {
-            String[] privateMessage = message.split("\\s+", 3);
-            String name = privateMessage[1];
-            String lastMessage = privateMessage[2];
-            textArea.appendText("Я [private] " + name + ": " + lastMessage + System.lineSeparator());
-        } else if (!message.isEmpty()) {
-            textArea.appendText("Я: " + message + System.lineSeparator());
-        }
-        if (!message.isEmpty()) {
-            messageService.sendMessage(message);
-            textMessage.clear();
-        }
+        return buildPublicMessage(message);
+    }
+
+    private Message buildPublicMessage(String message) {
+        PublicMessage publicMsg = new PublicMessage();
+        publicMsg.from = nickName;
+        publicMsg.message = message;
+        Message msg = new Message();
+        msg.command = Command.PUBLIC_MESSAGE;
+        msg.publicMessage = publicMsg;
+        return msg;
+    }
+
+    private String prepareToView(String message) {
+        return message.replaceAll("/w\\s+", "[private]: ");
     }
 
     public void shutdown() {
@@ -104,6 +119,10 @@ public class Controller implements Initializable {
     public void sendAuth (ActionEvent actionEvent) {
         String login = loginField.getText();
         String password = passField.getText();
-        messageService.sendMessage(String.format("/auth %s %s", login, password));
+        AuthMessage msg = new AuthMessage();
+        msg.login = login;
+        msg.password = password;
+        Message authMsg = Message.createAuth(msg);
+        messageService.sendMessage(authMsg.toJson());
     }
 }

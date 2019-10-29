@@ -1,10 +1,11 @@
 package Messenger.Server;
-import Messenger.Server.auth.AuthService;
-import Messenger.Server.auth.BaseAuthService;
+import Messenger.Server.auth.*;
+import Messenger.Server.gson.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class MyServer {
@@ -12,10 +13,12 @@ class MyServer {
     private static final int PORT = 8189;
     private final AuthService authService = new BaseAuthService();
     private List<ClientHandler> clients = new ArrayList<>();
+    private ServerSocket serverSocket = null;
 
     MyServer() {
         System.out.println("Сервер запущен!");
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try {
+            serverSocket = new ServerSocket(PORT);
             authService.start();
             while (true) {
                 System.out.println("Ожидание подключения клиентов ...");
@@ -27,16 +30,38 @@ class MyServer {
             System.err.println("Ошибка в работе сервера. Причина: " + e.getMessage());
             e.printStackTrace();
         } finally {
+            shutdownServer();
+        }
+    }
+
+    private void shutdownServer() {
+        try {
             authService.stop();
+            serverSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     synchronized void subscribe(ClientHandler clientHandler) {
         clients.add(clientHandler);
+        broadcastClientsList();
+    }
+
+    private void broadcastClientsList() {
+        List<String> nicknames = new ArrayList<>();
+        nicknames.add("< ДЛЯ ВСЕХ >");
+        for (ClientHandler client : clients) {
+            nicknames.add(client.getClientName());
+        }
+
+        Message message = Message.createClientList(nicknames);
+        broadcastMessage(message.toJson());
     }
 
     synchronized void unsubscribe(ClientHandler clientHandler) {
         clients.remove(clientHandler);
+        broadcastClientsList();
     }
 
     AuthService getAuthService() {
@@ -49,18 +74,20 @@ class MyServer {
                 return true;
             }
         }
+
         return false;
     }
 
-    synchronized void broadcastMessage(String nameSender, String message) {
+    synchronized void broadcastMessage(String message, ClientHandler... unfilteredClients) {
+        List<ClientHandler> unfiltered = Arrays.asList(unfilteredClients);
         for (ClientHandler client : clients) {
-            if (!client.getClientName().equals(nameSender)) {
+            if (!unfiltered.contains(client)) {
                 client.sendMessage(message);
             }
         }
     }
 
-    synchronized void privateMessage(String nick, ClientHandler sender, String message) {
+    synchronized void privateMessage(String message, String nick, ClientHandler sender) {
         for (int i = 0; i < clients.size(); i++) {
             if (clients.get(i).getClientName().equals(nick)) {
                 clients.get(i).sendMessage(message);
@@ -68,16 +95,5 @@ class MyServer {
             }
         }
         sender.sendMessage("Сервер: Этот клиент не подключен!");
-
-//        for (ClientHandler client : clients) {
-//            if (client.getClientName().equals(nick)) {
-//                client.sendMessage(message);
-//                break;
-//            }
-//            if (!client.getClientName().equals(nick)) {
-//                sender.sendMessage("Сервер: Этот клиент не подключен!");
-//            }
-//        }
-
     }
 }

@@ -27,17 +27,21 @@ public class Network implements Closeable {
         this.inputStream = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());
 
-        new Thread(() -> {
-            while (true) {
-                try {
-                    String message = inputStream.readUTF();
-                    Platform.runLater(() -> messageService.processRetrievedMessage(message));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
+        Thread readServerThread = new Thread(this::readMessagesFromServer);
+        readServerThread.setDaemon(true);
+        readServerThread.start();
+    }
+
+    private void readMessagesFromServer() {
+        while (true) {
+            try {
+                String message = inputStream.readUTF();
+                Platform.runLater(() -> messageService.processRetrievedMessage(message));
+            } catch (Exception e) {
+                System.out.println("Соединение с сервером было разорвано!");
+                break;
             }
-        }).start();
+        }
     }
 
     void send (String message) {

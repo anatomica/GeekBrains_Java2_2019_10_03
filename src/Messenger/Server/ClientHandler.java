@@ -1,4 +1,5 @@
 package Messenger.Server;
+import Messenger.Server.gson.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,7 +12,6 @@ public class ClientHandler {
     private Socket socket;
     private DataInputStream in;
     private DataOutputStream out;
-    public static String[] privateMessage;
 
     ClientHandler(Socket socket, MyServer myServer) {
         try {
@@ -43,27 +43,25 @@ public class ClientHandler {
         while (true) {
             String clientMessage = in.readUTF();
             System.out.printf("Сообщение: '%s' от клиента: %s%n", clientMessage, clientName);
-            if (clientMessage.equals("/end")) {
-                return;
+            Message m = Message.fromJson(clientMessage);
+            switch (m.command) {
+                case PUBLIC_MESSAGE:
+                    PublicMessage publicMessage = m.publicMessage;
+                    myServer.broadcastMessage(publicMessage.from + ": " + publicMessage.message, this);
+                    break;
+                case PRIVATE_MESSAGE:
+                    PrivateMessage privateMessage = m.privateMessage;
+                    myServer.privateMessage(privateMessage.from + " [private]: " + privateMessage.message, privateMessage.to, ClientHandler.this);
+                    break;
+                case END:
+                    return;
             }
-            if (clientMessage.startsWith("/w")) {
-                privateMessage = clientMessage.split("\\s+", 3);
-                String privateNick = privateMessage[1];
-                String lastMessage = privateMessage[2];
-                if (privateNick.equals(clientName)) {
-                    ClientHandler.this.sendMessage("Сервер: А смысл писать себе самому?)");
-                    continue;
-                }
-                myServer.privateMessage(privateNick, ClientHandler.this, clientName + " [private]: " + lastMessage);
-            }
-            else
-            myServer.broadcastMessage(clientName,clientName + ": " + clientMessage);
         }
     }
 
     private void closeConnection() {
         myServer.unsubscribe(this);
-        myServer.broadcastMessage(clientName,clientName + " is offline");
+        myServer.broadcastMessage(clientName + " is offline");
         try {
             socket.close();
         } catch (IOException e) {
@@ -75,25 +73,23 @@ public class ClientHandler {
     // "/auth login password"
     private boolean authentication() throws IOException {
         String clientMessage = in.readUTF();
-        if (clientMessage.startsWith("/auth")) {
-            String[] loginAndPasswords = clientMessage.split("\\s+");
-            String login    = loginAndPasswords[1];
-            String password = loginAndPasswords[2];
+        Message message = Message.fromJson(clientMessage);
+        if (message.command == Command.AUTH_MESSAGE) {
+            AuthMessage authMessage = message.authMessage;
+            String login = authMessage.login;
+            String password = authMessage.password;
             String nick = myServer.getAuthService().getNickByLoginPass(login, password);
-
             if (nick == null) {
                 sendMessage("Неверные логин/пароль!");
                 return false;
             }
-
             if (myServer.isNickBusy(nick)) {
                 sendMessage("Учетная запись уже используется!");
                 return false;
             }
-
             sendMessage("/authok " + nick);
             clientName = nick;
-            myServer.broadcastMessage(clientName,clientName + " is online");
+            myServer.broadcastMessage(clientName + " is online");
             myServer.subscribe(this);
         }
         return true;

@@ -24,7 +24,7 @@ class MessageService {
     private Network network;
     private String nickname;
     private Thread timeWait;
-    private int waitTime = 10;
+    private int waitTime = 120;  // ожидание в секундах
 
     MessageService (Controller controller, boolean needStopServerOnClosed) {
         this.textArea = controller.textArea;

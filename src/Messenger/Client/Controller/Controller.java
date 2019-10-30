@@ -17,6 +17,7 @@ public class Controller implements Initializable {
     @FXML public TextField textMessage;
     @FXML public TextArea textArea;
     @FXML public MenuItem closeButton;
+    @FXML public MenuItem clearChat;
     @FXML public TextField loginField;
     @FXML public PasswordField passField;
     @FXML public HBox authPanel;
@@ -73,10 +74,7 @@ public class Controller implements Initializable {
         messageService.sendMessage(msg.toJson());
         textMessage.clear();
         selectedNickname = clientList.getSelectionModel().getSelectedItem();
-        if (selectedNickname == null) {
-            textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
-        }
-        if (selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
+        if (selectedNickname == null || selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
             textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
         }
         if (!selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
@@ -86,13 +84,10 @@ public class Controller implements Initializable {
 
     private Message buildMessage(String message) {
         selectedNickname = clientList.getSelectionModel().getSelectedItem();
-        if (selectedNickname == null) {
+        if (selectedNickname == null || selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
             return buildPublicMessage(message);
         }
-        if (selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
-            return buildPublicMessage(message);
-        }
-        if (selectedNickname != null) {
+        if (!selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
             PrivateMessage msg = new PrivateMessage();
             msg.from = nickName;
             msg.to = selectedNickname;
@@ -133,5 +128,9 @@ public class Controller implements Initializable {
         msg.password = password;
         Message authMsg = Message.createAuth(msg);
         messageService.sendMessage(authMsg.toJson());
+    }
+
+    public void clearChatAction(ActionEvent actionEvent) {
+        textArea.clear();
     }
 }

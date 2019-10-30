@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Messenger extends Application {
@@ -16,6 +17,7 @@ public class Messenger extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Сетевой чат");
+        stage.getIcons().add(new Image("Messenger/Client/stage_icon.png"));
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("scene.fxml"));
         Parent root = loader.load();

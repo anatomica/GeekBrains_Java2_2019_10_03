@@ -24,7 +24,7 @@ public class Controller implements Initializable {
     @FXML public ListView<String> clientList;
     public String nickName;
     private MessageService messageService;
-    // private String selectedNickname;
+    private String selectedNickname;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -69,14 +69,26 @@ public class Controller implements Initializable {
 
     private void sendMessageAction() {
         String message = textMessage.getText();
-        textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
         Message msg = buildMessage(message);
         messageService.sendMessage(msg.toJson());
         textMessage.clear();
+        selectedNickname = clientList.getSelectionModel().getSelectedItem();
+        if (selectedNickname == null) {
+            textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
+        }
+        if (selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
+            textArea.appendText("Я: " + prepareToView(message) + System.lineSeparator());
+        }
+        if (!selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
+            textArea.appendText("Я [private] " + selectedNickname + ": " + prepareToView(message) + System.lineSeparator());
+        }
     }
 
     private Message buildMessage(String message) {
-        String selectedNickname = clientList.getSelectionModel().getSelectedItem();
+        selectedNickname = clientList.getSelectionModel().getSelectedItem();
+        if (selectedNickname == null) {
+            return buildPublicMessage(message);
+        }
         if (selectedNickname.equals("< ДЛЯ ВСЕХ >")) {
             return buildPublicMessage(message);
         }
@@ -86,9 +98,6 @@ public class Controller implements Initializable {
             msg.to = selectedNickname;
             msg.message = message;
             return Message.createPrivate(msg);
-        }
-        if (selectedNickname == null) {
-            return buildPublicMessage(message);
         }
         return buildPublicMessage(message);
     }
